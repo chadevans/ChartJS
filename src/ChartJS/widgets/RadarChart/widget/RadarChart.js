@@ -163,7 +163,23 @@ define([
                 maintainAspectRatio : this.maintainAspectRatio,
 
                 // Custom tooltip?
-                customTooltips : false //lang.hitch(this, this.customTooltip)
+                customTooltips : false, //lang.hitch(this, this.customTooltip)
+                    
+                // Get the rendered chart
+                onAnimationComplete : lang.hitch(this, function () {
+                    if (this.onchartrenderedmf) {
+                        mx.data.create({
+                            entity: this.renderedEntity,
+                            callback: function (obj) {
+                                obj.set(this.base64Attr, this.canvasNode.toDataURL());
+                                this._executeMicroflow(this.onchartrenderedmf, null, obj);
+                            },
+                            error: function (err) {
+                                logger.warn('Error creating object: ', err);
+                            }
+                        }, this);
+                    }
+                })
 
             });
 
